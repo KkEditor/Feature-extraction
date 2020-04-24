@@ -24,17 +24,22 @@ def von_neumann_entropy(density_matrix, cutoff=10):
         result -= np.trace(power) * d
         a *= 2
     result -= np.trace(power) / (a-1) * 0.75
-    return result / math.log(2)
+    return np.asarray(result / math.log(2))
 
 def cor(list_values):
     return np.corrcoef(list_values)
+
 def calculate_statistics(list_values):
     n5 = np.nanpercentile(list_values, 5)
     n25 = np.nanpercentile(list_values, 25)
+    n75 = np.nanpercentile(list_values, 75)
+    n95 = np.nanpercentile(list_values, 95)
     median = np.nanpercentile(list_values, 50)
     mean = np.nanmean(list_values)
+    std = np.nanstd(list_values)
+    var = np.nanvar(list_values)
     rms = np.nanmean(np.sqrt(list_values ** 2))
-    return [n5, n25, median, mean, rms]
+    return np.asarray((n5, n25, n75, n95, median, mean, std, var, rms))
 
 
 def calculate_crossings(list_values):
@@ -42,14 +47,13 @@ def calculate_crossings(list_values):
     no_zero_crossings = len(zero_crossing_indices)
     mean_crossing_indices = np.nonzero(np.diff(np.array(list_values) >np.nanmean(list_values)))[0]
     no_mean_crossings = len(mean_crossing_indices)
-    return no_zero_crossings, no_mean_crossings
-
+    return np.asarray((no_zero_crossings, no_mean_crossings))
 
 def get_features(list_values):
     crossings = calculate_crossings(list_values)
     statistics = calculate_statistics(list_values)
     entropy = von_neumann_entropy(list_values)
-    return entropy
+    return np.concatenate((np.expand_dims(entropy,axis=0),crossings,statistics))
 
 #use this func
 #output: array of features
@@ -62,14 +66,19 @@ def haar_extract(img,size):
         feature.append(get_features(e))
     return np.ndarray.flatten(np.array(feature))
 
-img_size=256
-path="C:/Users/kk/Desktop/datatest-001/"
 
-img=cv2.imread(path+"2.png",0)
+def main():
+    img_size=256
+    path="C:/Users/kk/Desktop/datatest-001/"
 
-start = timeit.default_timer()
-fea=haar_extract(img,(64,64))
-print(fea)
+    img=cv2.imread(path+"2.png",0)
 
-stop1 = timeit.default_timer()
-print("Time: ",stop1-start)
+    start = timeit.default_timer()
+    fea=haar_extract(img,(64,64))
+    print(fea)
+
+    stop1 = timeit.default_timer()
+    print("Time: ",stop1-start)
+
+if __name__ == '__main__':
+    main()
