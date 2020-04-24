@@ -39,16 +39,16 @@ def haar_extract(img,size):
     out = [item for t in cof for item in t]
     for e in out:
         feature.append(get_features(e))
-    return feature
+    return np.ndarray.flatten(np.array(feature))
 
-img_size=256
-path="C:/Users/kk/Desktop/datatest-001/"
-
-img=cv2.imread(path+"2.png",0)
-
-start = timeit.default_timer()
-fea=haar_extract(img,(256,256))
-print(fea)
-
-stop1 = timeit.default_timer()
-print("Time: ",stop1-start)
+# img_size=256
+# path="C:/Users/kk/Desktop/datatest-001/"
+#
+# img=cv2.imread(path+"2.png",0)
+#
+# start = timeit.default_timer()
+# fea=haar_extract(img,(64,64))
+# print(fea.shape)
+#
+# stop1 = timeit.default_timer()
+# print("Time: ",stop1-start)
