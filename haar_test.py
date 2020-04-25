@@ -3,8 +3,8 @@ import timeit
 import cv2
 import pywt
 import math
-
-
+import os
+import scipy.stats as stats
 def von_neumann_entropy(density_matrix, cutoff=10):
     x = np.mat(density_matrix)
     one = np.identity(x.shape[0])
@@ -24,36 +24,32 @@ def von_neumann_entropy(density_matrix, cutoff=10):
         result -= np.trace(power) * d
         a *= 2
     result -= np.trace(power) / (a-1) * 0.75
-    return np.asarray(result / math.log(2))
+    return np.asarray(np.around((result / math.log(2)),2))
 
 def cor(list_values):
     return np.corrcoef(list_values)
 
 def calculate_statistics(list_values):
+    zero_crossing_indices = np.nonzero(np.diff(np.array(list_values) > 0))[0]
+    no_zero_crossings = len(zero_crossing_indices)
+    mean_crossing_indices = np.nonzero(np.diff(np.array(list_values) > np.nanmean(list_values)))[0]
+    no_mean_crossings = len(mean_crossing_indices)
     n5 = np.nanpercentile(list_values, 5)
     n25 = np.nanpercentile(list_values, 25)
-    n75 = np.nanpercentile(list_values, 75)
-    n95 = np.nanpercentile(list_values, 95)
     median = np.nanpercentile(list_values, 50)
     mean = np.nanmean(list_values)
     std = np.nanstd(list_values)
     var = np.nanvar(list_values)
     rms = np.nanmean(np.sqrt(list_values ** 2))
-    return np.asarray((n5, n25, n75, n95, median, mean, std, var, rms))
+    mad=stats.median_absolute_deviation(list_values,axis=None)
+    # print(mad)
+    return n5, n25, median, mean, std, var, rms,no_mean_crossings,no_zero_crossings,mad
 
-
-def calculate_crossings(list_values):
-    zero_crossing_indices = np.nonzero(np.diff(np.array(list_values) > 0))[0]
-    no_zero_crossings = len(zero_crossing_indices)
-    mean_crossing_indices = np.nonzero(np.diff(np.array(list_values) >np.nanmean(list_values)))[0]
-    no_mean_crossings = len(mean_crossing_indices)
-    return np.asarray((no_zero_crossings, no_mean_crossings))
 
 def get_features(list_values):
-    crossings = calculate_crossings(list_values)
     statistics = calculate_statistics(list_values)
     entropy = von_neumann_entropy(list_values)
-    return np.concatenate((np.expand_dims(entropy,axis=0),crossings,statistics))
+    return statistics
 
 #use this func
 #output: array of features
@@ -68,14 +64,15 @@ def haar_extract(img,size):
 
 
 def main():
-    img_size=256
-    path="C:/Users/kk/Desktop/datatest-001/"
-
-    img=cv2.imread(path+"2.png",0)
-
     start = timeit.default_timer()
-    fea=haar_extract(img,(64,64))
-    print(fea)
+    path="C:/Users/kk/Desktop/crop/"
+    namelist=os.listdir(path)
+    for i in namelist:
+        img=cv2.imread(path+i,0)
+        fea = haar_extract(img, (64, 64))
+        print(fea)
+
+
 
     stop1 = timeit.default_timer()
     print("Time: ",stop1-start)
