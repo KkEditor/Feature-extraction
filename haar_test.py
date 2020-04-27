@@ -24,7 +24,7 @@ def von_neumann_entropy(density_matrix, cutoff=10):
         result -= np.trace(power) * d
         a *= 2
     result -= np.trace(power) / (a-1) * 0.75
-    return np.asarray(np.around((result / math.log(2)),2))
+    return np.array(result / math.log(2),dtype=np.float64)
 
 def cor(list_values):
     return np.corrcoef(list_values)
@@ -48,8 +48,8 @@ def calculate_statistics(list_values):
 
 def get_features(list_values):
     statistics = calculate_statistics(list_values)
-    # entropy = von_neumann_entropy(list_values)
-    return statistics
+    entropy = von_neumann_entropy(list_values)
+    return np.concatenate((np.expand_dims(entropy,axis=0),statistics))
 
 #use this func
 #output: array of features
@@ -69,7 +69,7 @@ def main():
     namelist=os.listdir(path)
     for i in namelist:
         img=cv2.imread(path+i,0)
-        fea = haar_extract(img, (64, 64))
+        fea = haar_extract(img, (256, 256))
         print(fea)
 
 
