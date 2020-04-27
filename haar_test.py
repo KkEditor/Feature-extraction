@@ -41,14 +41,14 @@ def calculate_statistics(list_values):
     std = np.nanstd(list_values)
     var = np.nanvar(list_values)
     rms = np.nanmean(np.sqrt(list_values ** 2))
-    mad=stats.median_absolute_deviation(list_values,axis=None)
+    mad=np.array(stats.median_absolute_deviation(list_values,axis=None),dtype=np.float64)
     # print(mad)
     return n5, n25, median, mean, std, var, rms,no_mean_crossings,no_zero_crossings,mad
 
 
 def get_features(list_values):
     statistics = calculate_statistics(list_values)
-    entropy = von_neumann_entropy(list_values)
+    # entropy = von_neumann_entropy(list_values)
     return statistics
 
 #use this func
