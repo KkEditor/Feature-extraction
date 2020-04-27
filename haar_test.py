@@ -14,16 +14,7 @@ def von_neumann_entropy(density_matrix, cutoff=10):
     for k in range(2, cutoff):
         result -= np.trace(power) / (k*k - k)
         power = power.dot(base)
-
-    # Twiddly hacky magic.
-    a = cutoff
-    for k in range(3):
-        d = (a+1) / (4*a*(a-1))
-        result -= np.trace(power) * d
-        power = power.dot(power)
-        result -= np.trace(power) * d
-        a *= 2
-    result -= np.trace(power) / (a-1) * 0.75
+    result -= np.trace(power) / (cutoff - 1)
     return np.array(result / math.log(2),dtype=np.float64)
 
 def cor(list_values):
@@ -42,14 +33,16 @@ def calculate_statistics(list_values):
     var = np.nanvar(list_values)
     rms = np.nanmean(np.sqrt(list_values ** 2))
     mad=np.array(stats.median_absolute_deviation(list_values,axis=None),dtype=np.float64)
+    coef=np.array(stats.variation(np.nanvar(list_values)))
     # print(mad)
-    return n5, n25, median, mean, std, var, rms,no_mean_crossings,no_zero_crossings,mad
+    return n5, n25, median, mean, std, var, rms,no_mean_crossings,no_zero_crossings,mad,coef
 
 
 def get_features(list_values):
     statistics = calculate_statistics(list_values)
-    entropy = von_neumann_entropy(list_values)
-    return np.concatenate((np.expand_dims(entropy,axis=0),statistics))
+    # entropy = von_neumann_entropy(list_values)
+    # return np.concatenate((np.expand_dims(entropy,axis=0),statistics))
+    return statistics
 
 #use this func
 #output: array of features
