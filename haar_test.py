@@ -23,22 +23,22 @@ def cor(list_values):
     return np.corrcoef(list_values)
 
 def calculate_statistics(list_values):
-    # zero_crossing_indices = np.nonzero(np.diff(np.array(list_values) > 0))[0]
-    # no_zero_crossings = len(zero_crossing_indices)
-    # mean_crossing_indices = np.nonzero(np.diff(np.array(list_values) > np.nanmean(list_values)))[0]
-    # no_mean_crossings = len(mean_crossing_indices)
-    # n5 = np.percentile(list_values, 5)
-    # n25 = np.percentile(list_values, 25)
-    # median = np.percentile(list_values, 50)
-    mean = np.mean(list_values)
-    std = np.std(list_values)
-    # var = np.var(list_values)
-    # rms = np.mean(np.sqrt(list_values ** 2))
-    # mad=np.array(stats.median_absolute_deviation(np.std(list_values),axis=None),dtype=np.float64)
-    # coef=np.array(stats.variation(np.var(list_values)))
+    zero_crossing_indices = np.nonzero(np.diff(np.array(list_values) > 0))[0]
+    no_zero_crossings = len(zero_crossing_indices)
+    mean_crossing_indices = np.nonzero(np.diff(np.array(list_values) > np.nanmean(list_values)))[0]
+    no_mean_crossings = len(mean_crossing_indices)
+    n5 = np.percentile(list_values, 5)
+    n25 = np.percentile(list_values, 25)
+    median = np.percentile(list_values, 50)
+    mean = np.nanmean(list_values)
+    std = np.nanstd(list_values)
+    var = np.nanvar(list_values)
+    rms = np.nanmean(np.sqrt(list_values ** 2))
+    # mad=np.array(stats.median_absolute_deviation(list_values,axis=None),dtype=np.float64)
+    # coef=np.array(stats.variation(np.nanvar(list_values)))
     # # print(mad)
     # return n5, n25, median, mean, std, var, rms,mad,coef
-    return mean,std
+    return n5,mean,std,var,rms,no_zero_crossings,no_mean_crossings
 
 
 def get_features(list_values):
