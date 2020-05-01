@@ -23,22 +23,27 @@ def cor(list_values):
     return np.corrcoef(list_values)
 
 def calculate_statistics(list_values):
-    zero_crossing_indices = np.nonzero(np.diff(np.array(list_values) > 0))[0]
-    no_zero_crossings = len(zero_crossing_indices)
-    mean_crossing_indices = np.nonzero(np.diff(np.array(list_values) > np.nanmean(list_values)))[0]
-    no_mean_crossings = len(mean_crossing_indices)
-    n5 = np.percentile(list_values, 5)
-    n25 = np.percentile(list_values, 25)
-    median = np.percentile(list_values, 50)
-    mean = np.nanmean(list_values)
-    std = np.nanstd(list_values)
-    var = np.nanvar(list_values)
-    rms = np.nanmean(np.sqrt(list_values ** 2))
+    # zero_crossing_indices = np.nonzero(np.diff(np.array(list_values) > 0))[0]
+    # no_zero_crossings = len(zero_crossing_indices)
+    # mean_crossing_indices = np.nonzero(np.diff(np.array(list_values) > np.nanmean(list_values)))[0]
+    # no_mean_crossings = len(mean_crossing_indices)
+    # n5 = np.percentile(list_values, 5)
+
+    #error
+    # n25 = np.percentile(list_values, 25)
+    # median = np.percentile(list_values, 50)
     # mad=np.array(stats.median_absolute_deviation(list_values,axis=None),dtype=np.float64)
     # coef=np.array(stats.variation(np.nanvar(list_values)))
-    # # print(mad)
+    #dk why tho
+
+
+    mean = np.nanmean(list_values)
+    std = np.nanstd(list_values)
+    # var = np.nanvar(list_values)
+    # rms = np.nanmean(np.sqrt(list_values ** 2))
+
     # return n5, n25, median, mean, std, var, rms,mad,coef
-    return n5,mean,std,var,rms,no_zero_crossings,no_mean_crossings
+    return mean,std
 
 
 def get_features(list_values):
@@ -54,11 +59,23 @@ def haar_extract(img,size):
     feature=[]
     # cof=pywt.wavedec2(img,'haar')
     # out = [item for t in cof for item in t]
-    cA,cN=pywt.dwt2(img,'haar')
-    sin=dct(img)
-    feature.append(get_features(sin))
-    for e in cN:
+
+    #level 1
+    cA1,cN1=pywt.dwt2(img,'haar')
+    sin1=dct(img)
+    feature.append(get_features(sin1))
+    for e in cN1:
         feature.append(get_features(e))
+
+
+    #level 2
+    cA2,cN2=pywt.dwt2(cA1,'haar')
+    sin2=dct(cA1)
+    feature.append(get_features(sin2))
+    for e in cN2:
+        feature.append(get_features(e))
+
+
     return np.array(list(map('{:.6f}'.format,np.ndarray.flatten(np.array(feature)))))
 
 
