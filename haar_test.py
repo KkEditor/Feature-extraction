@@ -57,24 +57,27 @@ def get_features(list_values):
 def haar_extract(img,size):
     img=cv2.resize(img,(size[0],size[1]))
     feature=[]
-    # cof=pywt.wavedec2(img,'haar')
-    # out = [item for t in cof for item in t]
-
-    #level 1
-    cA1,cN1=pywt.dwt2(img,'haar')
-    sin1=dct(img)
-    feature.append(get_features(sin1))
-    for e in cN1:
+    cof=pywt.wavedec2(img,'haar')
+    out = [item for t in cof for item in t]
+    for e in out:
+        sin=dct(img)
+        feature.append(get_features(sin))
         feature.append(get_features(e))
-
-
-    #level 2
-    cA2,cN2=pywt.dwt2(cA1,'haar')
-    sin2=dct(cA1)
-    feature.append(get_features(sin2))
-    for e in cN2:
-        feature.append(get_features(e))
-
+    # #level 1
+    # cA1,cN1=pywt.dwt2(img,'haar')
+    # sin1=dct(img)
+    # feature.append(get_features(sin1))
+    # for e in cN1:
+    #     feature.append(get_features(e))
+    #
+    #
+    # #level 2
+    # cA2,cN2=pywt.dwt2(cA1,'haar')
+    # sin2=dct(cA1)
+    # feature.append(get_features(sin2))
+    # for e in cN2:
+    #     feature.append(get_features(e))
+    #
 
     return np.array(list(map('{:.6f}'.format,np.ndarray.flatten(np.array(feature)))))
 
