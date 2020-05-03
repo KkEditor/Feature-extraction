@@ -4,7 +4,7 @@ import cv2
 import pywt
 import math
 import os
-import scipy.stats as stats
+import scipy
 import pandas as pd
 from scipy.fftpack import dct
 def von_neumann_entropy(density_matrix, cutoff=10):
@@ -21,6 +21,11 @@ def von_neumann_entropy(density_matrix, cutoff=10):
 
 def cor(list_values):
     return np.corrcoef(list_values)
+
+def eigen_vector(list_values):
+    if list_values.ndim ==1:
+        return 0
+    return np.linalg.eig(list_values)
 
 def calculate_statistics(list_values):
     # zero_crossing_indices = np.nonzero(np.diff(np.array(list_values) > 0))[0]
@@ -46,9 +51,14 @@ def calculate_statistics(list_values):
     return mean,std
 
 
+def get_features_dct(list_values):
+    statistics = calculate_statistics(list_values)
+    return statistics
+
 def get_features(list_values):
     statistics = calculate_statistics(list_values)
     # entropy = von_neumann_entropy(list_values)
+    eig=eigen_vector(list_values)
     return statistics
 
 
@@ -61,8 +71,9 @@ def haar_extract(img,size):
     out = [item for t in cof for item in t]
     for e in out:
         sin=dct(img)
-        feature.append(get_features(sin))
+        feature.append(get_features_dct(sin))
         feature.append(get_features(e))
+        # print(e.shape)
     # #level 1
     # cA1,cN1=pywt.dwt2(img,'haar')
     # sin1=dct(img)
@@ -91,7 +102,6 @@ def main():
         img=cv2.imread(path+i,0)
         fea = haar_extract(img, (256, 256))
         print(fea)
-        # print(fea)
 
 
     stop1 = timeit.default_timer()
