@@ -22,11 +22,6 @@ def von_neumann_entropy(density_matrix, cutoff=10):
 def cor(list_values):
     return np.corrcoef(list_values)
 
-def eigen_vector(list_values):
-    if list_values.ndim ==1:
-        return 0
-    return np.linalg.eig(list_values)
-
 def calculate_statistics(list_values):
     # zero_crossing_indices = np.nonzero(np.diff(np.array(list_values) > 0))[0]
     # no_zero_crossings = len(zero_crossing_indices)
@@ -57,9 +52,10 @@ def get_features_dct(list_values):
 
 def get_features(list_values):
     statistics = calculate_statistics(list_values)
-    # entropy = von_neumann_entropy(list_values)
-    eig=eigen_vector(list_values)
-    return statistics
+    entropy = von_neumann_entropy(list_values)
+    entropy=tuple(np.expand_dims(entropy,axis=0))
+    return statistics + entropy
+
 
 
 #use this func
@@ -89,8 +85,9 @@ def haar_extract(img,size):
     # for e in cN2:
     #     feature.append(get_features(e))
     #
-
-    return np.array(list(map('{:.6f}'.format,np.ndarray.flatten(np.array(feature)))))
+    lst=list(sum(feature, ()))
+    formated=["%.6f" % member for member in lst]
+    return np.array(formated)
 
 
 def main():
@@ -102,6 +99,7 @@ def main():
         img=cv2.imread(path+i,0)
         fea = haar_extract(img, (256, 256))
         print(fea)
+        break
 
 
     stop1 = timeit.default_timer()
