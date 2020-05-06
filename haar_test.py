@@ -45,6 +45,9 @@ def calculate_statistics(list_values):
     # return n5, n25, median, mean, std, var, rms,mad,coef
     return mean,std
 
+def eigen_vector(list_values):
+    W,v=np.linalg.eig(list_values)
+    return np.round(np.real(np.sum(W)),6)
 
 def get_features_dct(list_values):
     statistics = calculate_statistics(list_values)
@@ -54,7 +57,9 @@ def get_features(list_values):
     statistics = calculate_statistics(list_values)
     entropy = von_neumann_entropy(list_values)
     entropy=tuple(np.expand_dims(entropy,axis=0))
-    return statistics + entropy
+    W=eigen_vector(np.expand_dims(list_values,axis=0))
+    W=tuple(np.expand_dims(W,axis=0))
+    return statistics + entropy + W
 
 
 
@@ -93,14 +98,12 @@ def haar_extract(img,size):
 def main():
     start = timeit.default_timer()
     path="C:/Users/kk/Desktop/crop/"
-    test=pd.read_csv("test.csv")
     namelist=os.listdir(path)
     for i in namelist:
         img=cv2.imread(path+i,0)
         fea = haar_extract(img, (256, 256))
         print(fea)
         break
-
 
     stop1 = timeit.default_timer()
     print("Time: ",stop1-start)
