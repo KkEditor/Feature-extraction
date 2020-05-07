@@ -7,6 +7,8 @@ import os
 import scipy
 import pandas as pd
 from scipy.fftpack import dct
+def median(list_values):
+    return np.round(np.sum(np.nanmedian(list_values,axis=0)),6)
 def von_neumann_entropy(density_matrix, cutoff=10):
     x = np.mat(density_matrix)
     one = np.identity(x.shape[0])
@@ -18,9 +20,6 @@ def von_neumann_entropy(density_matrix, cutoff=10):
         power = power.dot(base)
     result -= np.trace(power) / (cutoff - 1)
     return np.array(result / math.log(2),dtype=np.float64)
-
-def cor(list_values):
-    return np.corrcoef(list_values)
 
 def calculate_statistics(list_values):
     # zero_crossing_indices = np.nonzero(np.diff(np.array(list_values) > 0))[0]
@@ -59,7 +58,9 @@ def get_features(list_values):
     entropy=tuple(np.expand_dims(entropy,axis=0))
     W=eigen_vector(np.expand_dims(list_values,axis=0))
     W=tuple(np.expand_dims(W,axis=0))
-    return statistics + entropy + W
+    med=median(list_values)
+    med = tuple(np.expand_dims(med, axis=0))
+    return statistics + entropy + W +med
 
 
 
