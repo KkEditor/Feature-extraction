@@ -20,7 +20,8 @@ def von_neumann_entropy(density_matrix, cutoff=10):
         power = power.dot(base)
     result -= np.trace(power) / (cutoff - 1)
     return np.array(result / math.log(2),dtype=np.float64)
-
+def det(list_values):
+    return np.round(np.linalg.det(np.expand_dims(list_values,axis=0)),6)
 def calculate_statistics(list_values):
     # zero_crossing_indices = np.nonzero(np.diff(np.array(list_values) > 0))[0]
     # no_zero_crossings = len(zero_crossing_indices)
@@ -60,7 +61,9 @@ def get_features(list_values):
     W=tuple(np.expand_dims(W,axis=0))
     med=median(list_values)
     med = tuple(np.expand_dims(med, axis=0))
-    return statistics + entropy + W +med
+    de=det(list_values)
+    de = tuple(np.expand_dims(de, axis=0))
+    return statistics + entropy + W + med + de
 
 
 
