@@ -43,7 +43,7 @@ def calculate_statistics(list_values):
     # rms = np.nanmean(np.sqrt(list_values ** 2))
 
     # return n5, n25, median, mean, std, var, rms,mad,coef
-    return mean,std
+    return tuple(np.expand_dims(mean,axis=0))
 
 def eigen_vector(list_values):
     W,v=np.linalg.eig(list_values)
@@ -63,7 +63,7 @@ def get_features(list_values):
     med = tuple(np.expand_dims(med, axis=0))
     de=det(list_values)
     de = tuple(np.expand_dims(de, axis=0))
-    return statistics + entropy + W + med + de
+    return statistics + entropy + W
 
 
 
@@ -79,7 +79,7 @@ def haar_extract(img,size):
     # for i in cN:
     #     print(len(i))
     sin = dct(cA)
-    feature.append(get_features_dct(sin))
+    # feature.append(get_features_dct(sin))
     out = [item for t in cof for item in t]
     for e in out:
         feature.append(get_features(e))
