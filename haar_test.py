@@ -10,7 +10,10 @@ from scipy.fftpack import dct
 def tuyetvong(img,size):
     img = cv2.resize(img, (size[0], size[1]))
     cof=pywt.wavedec2(img,'haar')
-    return cof
+    out=np.array(cof).flatten().tolist()
+    out = np.array(out).flatten().tolist()
+    formated = [member for member in out]
+    return np.array(formated)
 def median(list_values):
     return np.round(np.sum(np.nanmedian(list_values,axis=0)),6)
 def von_neumann_entropy(density_matrix, cutoff=10):
