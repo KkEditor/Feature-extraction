@@ -73,10 +73,15 @@ def haar_extract(img,size):
     img=cv2.resize(img,(size[0],size[1]))
     feature=[]
     cof=pywt.wavedec2(img,'haar')
+    # print(len(cof))
+    cA=cof[0]
+    cN=cof[1:]
+    # for i in cN:
+    #     print(len(i))
+    sin = dct(cA)
+    feature.append(get_features_dct(sin))
     out = [item for t in cof for item in t]
     for e in out:
-        sin=dct(img)
-        feature.append(get_features_dct(sin))
         feature.append(get_features(e))
         # print(e.shape)
     # #level 1
@@ -101,14 +106,16 @@ def haar_extract(img,size):
 
 def main():
     start = timeit.default_timer()
-    path="C:/Users/kk/Desktop/crop/"
+    path="C:/Users/kk/Desktop/"
     namelist=os.listdir(path)
-    for i in namelist:
-        img=cv2.imread(path+i,0)
-        fea = haar_extract(img, (256, 256))
-        print(fea)
-        break
-
+    # for i in namelist:
+    #     img=cv2.imread(path+i,0)
+    #     fea = haar_extract(img, (256, 256))
+    #     print(fea)
+    #     break
+    img=cv2.imread(path+"1.jpg",0)
+    fea=haar_extract(img,(256,256))
+    print(fea)
     stop1 = timeit.default_timer()
     print("Time: ",stop1-start)
 
