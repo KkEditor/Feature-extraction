@@ -7,6 +7,10 @@ import os
 import scipy
 import pandas as pd
 from scipy.fftpack import dct
+def tuyetvong(img,size):
+    img = cv2.resize(img, (size[0], size[1]))
+    cof=pywt.wavedec2(img,'haar')
+    return cof
 def median(list_values):
     return np.round(np.sum(np.nanmedian(list_values,axis=0)),6)
 def von_neumann_entropy(density_matrix, cutoff=10):
@@ -114,7 +118,7 @@ def main():
     #     print(fea)
     #     break
     img=cv2.imread(path+"1.jpg",0)
-    fea=haar_extract(img,(256,256))
+    fea=tuyetvong(img,(256,256))
     print(fea)
     stop1 = timeit.default_timer()
     print("Time: ",stop1-start)
