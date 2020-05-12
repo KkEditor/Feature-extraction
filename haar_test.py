@@ -14,11 +14,14 @@ def tuyetvong(img,size):
     cA=cA.item()
     fea=[]
     cN=cof[1:]
-    print(cA)
-    print(len(cN))
     for e in cN:
         out = np.array(e).flatten().tolist()
+        mean=np.nanmean(e)
+        std=np.nanstd(e)
+        out.append(mean)
+        out.append(std)
         fea.append(out)
+
     formated = [member for member in fea]
     res=[]
     for i in formated:
