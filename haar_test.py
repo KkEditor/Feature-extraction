@@ -4,9 +4,11 @@ import cv2
 import pywt
 import math
 import os
+import sys
 import scipy
 import pandas as pd
 from scipy.fftpack import dct
+np.set_printoptions(threshold=sys.maxsize)
 def tuyetvong(img,size):
     img = cv2.resize(img, (size[0], size[1]))
     cof=pywt.wavedec2(img,'haar')
@@ -14,7 +16,8 @@ def tuyetvong(img,size):
     cA=cA.item()
     fea=[]
     cN=cof[1:]
-    for e in cN:
+    for i in range(len(cN)-3):
+        e=cN[i]
         out = np.array(e).flatten().tolist()
         mean=np.nanmean(e)
         std=np.nanstd(e)
@@ -28,7 +31,12 @@ def tuyetvong(img,size):
         for item in i:
             res.append(item)
     res.append(cA)
-    formattedList = ["%.6f" % member for member in res]
+    formattedList = ["%.06f" % member for member in res]
+    # formattedList=list(map(float,formattedList))
+    # for i in formattedList:
+    #     if i==0:
+    #         formattedList.remove(i)
+    # formattedList = ["%.06f" % member for member in formattedList]
     return np.array(formattedList)
 def median(list_values):
     return np.round(np.sum(np.nanmedian(list_values,axis=0)),6)
